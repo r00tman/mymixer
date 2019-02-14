@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
   int something = 0;
   int c;
   opterr = 0;
-  while ((c = getopt(argc, argv, "vp:s:h")) != -1) {
+  while ((c = getopt(argc, argv, "v:p:s:h")) != -1) {
     switch (c) {
       case '?':
       case 'h': show_help(); return 0;
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
 
   opterr = 0;
   optind = 1;
-  while ((c = getopt(argc, argv, "vp:s:h")) != -1) {
+  while ((c = getopt(argc, argv, "v:p:s:h")) != -1) {
     switch (c) {
       case 'v': set_vinyl_dm(atof(optarg)); break;
       case 'p': set_hp_volume(atof(optarg)); break;
