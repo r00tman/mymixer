@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <unistd.h>
 
 libusb_device_handle *devh = NULL;
 
@@ -47,7 +48,41 @@ void set_speaker_volume(float volume) {
   }
 }
 
-int main() {
+void show_help() {
+  const char help_str[] =
+    "Usage: mymixer [-v VOLUME] [-s VOLUME] [-p VOLUME] [-h]\n"
+    "Controls Audient iD14 volume/dm settings\n"
+    "\n"
+    "VOLUME is a float from 0.0 to 1.0 (to 1.1 in -v when boosted)\n"
+    "  -v VOLUME       set direct monitoring volume\n"
+    "  -s VOLUME       set speakers volume\n"
+    "  -p VOLUME       set headphones volume\n"
+    "  -h              show this help\n"
+    "\n"
+    "Examples:\n"
+    "  mymixer -v 1.06255     set DM volume with boosting\n"
+    "  mymixer -p 0.7 -s 0.0  turn HP on, mute speakers\n"
+    "  mymixer -s 0.7         turn speakers on\n";
+
+  printf("%s", help_str);
+}
+
+int main(int argc, char **argv) {
+  int something = 0;
+  int c;
+  opterr = 0;
+  while ((c = getopt(argc, argv, "vp:s:h")) != -1) {
+    switch (c) {
+      case '?':
+      case 'h': show_help(); return 0;
+      default: something = 1; break;
+    }
+  }
+  if (!something) {
+    show_help();
+    return 0;
+  }
+
   int err;
   err = libusb_init(NULL);
   assert(err == LIBUSB_SUCCESS);
@@ -65,9 +100,15 @@ int main() {
     return 1;
   }
 
-  set_vinyl_dm(1.06255);
-  set_hp_volume(0.7);
-  set_speaker_volume(0.0);
+  opterr = 0;
+  optind = 1;
+  while ((c = getopt(argc, argv, "vp:s:h")) != -1) {
+    switch (c) {
+      case 'v': set_vinyl_dm(atof(optarg)); break;
+      case 'p': set_hp_volume(atof(optarg)); break;
+      case 's': set_speaker_volume(atof(optarg)); break;
+    }
+  }
 
   libusb_release_interface(devh, 0);
   libusb_close(devh);
