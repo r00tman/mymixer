@@ -13,3 +13,8 @@ $ sudo mymixer -h
 ```
 
 Now, `mymixer` is installed to `~/.local/bin` folder and is ready to use.
+
+Notice that it needs superuser rights or a corresponding udev rule to work. Also, since it claims usb interface, snd_usb_audio might need to be restarted:
+```shell
+$ sudo modprobe -rv snd_usb_audio; sudo modprobe -v snd_usb_audio
+```
