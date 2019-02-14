@@ -5,3 +5,7 @@ mymixer: main.c
 
 clean:
 	rm mymixer
+
+install: mymixer
+	mkdir -p ~/.local/bin/
+	cp mymixer ~/.local/bin/
